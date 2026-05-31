@@ -1,0 +1,117 @@
+class Pattern {
+    function void draw(int x, int y, int w, int h, int id) {
+        var int i, maxW, maxH;
+
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x, y, x + w - 1, y + h - 1);
+        do Screen.setColor(true);
+
+        if (id = 0) { return; }
+
+        let maxW = x + w - 1;
+        let maxH = y + h - 1;
+
+        if (id = 1) {
+            let i = 0;
+            while (i < h) {
+                do Screen.drawRectangle(x, y + i, maxW, y + i);
+                let i = i + 2;
+            }
+            return;
+        }
+        if (id = 2) {
+            let i = 0;
+            while (i < w) {
+                do Screen.drawRectangle(x + i, y, x + i, maxH);
+                let i = i + 2;
+            }
+            return;
+        }
+        if (id = 3) {
+            let i = 0;
+            while (i < h) {
+                do Screen.drawRectangle(x, y + i, maxW, y + i);
+                let i = i + 3;
+            }
+            let i = 0;
+            while (i < w) {
+                do Screen.drawRectangle(x + i, y, x + i, maxH);
+                let i = i + 3;
+            }
+            return;
+        }
+        if (id = 4) {
+            let i = 0;
+            while (i < (h - 2)) {
+                do Screen.drawRectangle(x, y + i, maxW, y + i + 1);
+                let i = i + 4;
+            }
+            return;
+        }
+        if (id = 5) {
+            let i = 0;
+            while (i < (w - 2)) {
+                do Screen.drawRectangle(x + i, y, x + i + 1, maxH);
+                let i = i + 4;
+            }
+            return;
+        }
+        if (id = 6) {
+            let i = 0;
+            while (i < (h - 2)) {
+                do Screen.drawRectangle(x, y + i, maxW, y + i + 1);
+                let i = i + 4;
+            }
+            let i = 0;
+            while (i < (w - 2)) {
+                do Screen.drawRectangle(x + i, y, x + i + 1, maxH);
+                let i = i + 4;
+            }
+            return;
+        }
+        if (id = 7) {
+            let i = 0;
+            while (i < (h - 3)) {
+                do Screen.drawRectangle(x, y + i, maxW, y + i + 2);
+                let i = i + 5;
+            }
+            return;
+        }
+        if (id = 8) {
+            let i = 0;
+            while (i < (w - 3)) {
+                do Screen.drawRectangle(x + i, y, x + i + 2, maxH);
+                let i = i + 5;
+            }
+            return;
+        }
+        if (id = 9) {
+            let i = 0;
+            while (i < (h - 3)) {
+                do Screen.drawRectangle(x, y + i, maxW, y + i + 2);
+                let i = i + 5;
+            }
+            let i = 0;
+            while (i < (w - 3)) {
+                do Screen.drawRectangle(x + i, y, x + i + 2, maxH);
+                let i = i + 5;
+            }
+            return;
+        }
+        if (id = 10) {
+            let i = 0;
+            while (i < (h - 4)) {
+                do Screen.drawRectangle(x, y + i, maxW, y + i + 3);
+                let i = i + 6;
+            }
+            return;
+        }
+        if (id = 11) {
+            do Screen.drawRectangle(x + 2, y + 2, maxW - 2, maxH - 2);
+            return;
+        }
+
+        do Screen.drawRectangle(x, y, maxW, maxH);
+        return;
+    }
+}

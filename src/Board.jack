@@ -1,0 +1,96 @@
+class Board {
+    static int bx, by, cs, th;
+
+    function void init() {
+        let bx = 150;
+        let by = 38;
+        let cs = 52;
+        let th = 4;
+        return;
+    }
+
+    function void drawFrame() {
+        var int right, bottom;
+        let right = bx + (4 * cs) + th - 1;
+        let bottom = by + (4 * cs) + th - 1;
+
+        do Screen.setColor(true);
+        do Screen.drawRectangle(bx, by, right, by + th - 1);
+        do Screen.drawRectangle(bx, bottom - th + 1, right, bottom);
+        do Screen.drawRectangle(bx, by, bx + th - 1, bottom);
+        do Screen.drawRectangle(right - th + 1, by, right, bottom);
+        return;
+    }
+
+    function void drawGrid() {
+        var int i, pos;
+        do Screen.setColor(true);
+
+        let i = 1;
+        while (i < 4) {
+            let pos = by + (i * cs);
+            do Screen.drawRectangle(bx, pos, bx + (4 * cs) + th - 1, pos + th - 1);
+            let i = i + 1;
+        }
+
+        let i = 1;
+        while (i < 4) {
+            let pos = bx + (i * cs);
+            do Screen.drawRectangle(pos, by, pos + th - 1, by + (4 * cs) + th - 1);
+            let i = i + 1;
+        }
+        return;
+    }
+
+    function void drawCell(int r, int c, int val) {
+        var int x, y, w, h, d, tr, tc, textPx, textPy;
+
+        let x = bx + th + (c * cs);
+        let y = by + th + (r * cs);
+        let w = cs - th;
+        let h = cs - th;
+
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x, y, x + w - 1, y + h - 1);
+
+        if (val = 0) {
+            return;
+        }
+
+        do Pattern.draw(x, y, w, h, Board.getPat(val));
+
+        if (val < 10) { let d = 1; }
+        else {
+            if (val < 100) { let d = 2; }
+            else {
+                if (val < 1000) { let d = 3; }
+                else { let d = 4; }
+            }
+        }
+
+        let tr = (y + (h / 2) - 5) / 11;
+        let tc = (x + (w / 2) - (d * 4) + 4) / 8;
+
+        let textPx = tc * 8;
+        let textPy = tr * 11;
+
+        do Screen.setColor(false);
+        do Screen.drawRectangle(textPx - 2, textPy - 2, textPx + (d * 8) + 1, textPy + 12);
+
+        do Output.moveCursor(tr, tc);
+        do Output.printInt(val);
+        return;
+    }
+
+    function int getPat(int val) {
+        var int v, id;
+        let v = val;
+        let id = 0;
+        while (v > 1) {
+            let v = v / 2;
+            let id = id + 1;
+        }
+        if (id > 11) { let id = 11; }
+        return id;
+    }
+}

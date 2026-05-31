@@ -1,0 +1,208 @@
+class Grid {
+    field Array grid;
+    field int score;
+    field int maxTile;
+    field int seed;
+
+    constructor Grid new() {
+        let grid = Array.new(16);
+        let score = 0;
+        let maxTile = 0;
+        let seed = 0;
+        return this;
+    }
+
+    method void dispose() {
+        do grid.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void init() {
+        var int i;
+        let score = 0;
+        let maxTile = 0;
+        let i = 0;
+        while (i < 16) {
+            let grid[i] = 0;
+            let i = i + 1;
+        }
+        do spawn();
+        do spawn();
+        return;
+    }
+
+    method int getScore() { return score; }
+    method int getMaxTile() { return maxTile; }
+    method int getVal(int idx) { return grid[idx]; }
+
+    method int nextRandom(int max) {
+        let seed = (seed * 17) + 11;
+        if (seed < 0) {
+            let seed = -seed;
+            if (seed < 0) { let seed = 32767; }
+        }
+        return seed - ((seed / max) * max);
+    }
+
+    method void incSeed() {
+        let seed = seed + 1;
+        if (seed > 32000) { let seed = 0; }
+        return;
+    }
+
+    method void spawn() {
+        var int count, i, target, currentEmpty;
+        let count = 0;
+        let i = 0;
+        while (i < 16) {
+            if (grid[i] = 0) { let count = count + 1; }
+            let i = i + 1;
+        }
+        if (count = 0) { return; }
+        let target = nextRandom(count);
+        let i = 0;
+        let currentEmpty = 0;
+        while (i < 16) {
+            if (grid[i] = 0) {
+                if (currentEmpty = target) {
+                    let grid[i] = 2;
+                    if (maxTile = 0) { let maxTile = 2; }
+                    return;
+                }
+                let currentEmpty = currentEmpty + 1;
+            }
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method boolean checkGameOver() {
+        var int r, c, idx1, idx2;
+        let r = 0;
+        while (r < 16) {
+            if (grid[r] = 0) { return false; }
+            let r = r + 1;
+        }
+        let r = 0;
+        while (r < 4) {
+            let c = 0;
+            while (c < 3) {
+                let idx1 = (r * 4) + c;
+                let idx2 = idx1 + 1;
+                if (grid[idx1] = grid[idx2]) { return false; }
+                let c = c + 1;
+            }
+            let r = r + 1;
+        }
+        let r = 0;
+        while (r < 3) {
+            let c = 0;
+            while (c < 4) {
+                let idx1 = (r * 4) + c;
+                let idx2 = ((r + 1) * 4) + c;
+                if (grid[idx1] = grid[idx2]) { return false; }
+                let c = c + 1;
+            }
+            let r = r + 1;
+        }
+        return true;
+    }
+
+    method void reverseRows() {
+        var int r, temp;
+        let r = 0;
+        while (r < 4) {
+            let temp = grid[(r * 4) + 0]; let grid[(r * 4) + 0] = grid[(r * 4) + 3]; let grid[(r * 4) + 3] = temp;
+            let temp = grid[(r * 4) + 1]; let grid[(r * 4) + 1] = grid[(r * 4) + 2]; let grid[(r * 4) + 2] = temp;
+            let r = r + 1;
+        }
+        return;
+    }
+
+    method void transpose() {
+        var int r, c, temp;
+        let r = 0;
+        while (r < 4) {
+            let c = r + 1;
+            while (c < 4) {
+                let temp = grid[(r * 4) + c];
+                let grid[(r * 4) + c] = grid[(c * 4) + r];
+                let grid[(c * 4) + r] = temp;
+                let c = c + 1;
+            }
+            let r = r + 1;
+        }
+        return;
+    }
+
+    method boolean processLeft() {
+        var int r, writeCol, readCol, idxR, idxW, idxNext;
+        var boolean changed;
+        let changed = false;
+        let r = 0;
+        while (r < 4) {
+            let writeCol = 0; let readCol = 0;
+            while (readCol < 4) {
+                let idxR = (r * 4) + readCol;
+                if (grid[idxR] > 0) {
+                    if ((writeCol < readCol) | (writeCol > readCol)) {
+                        let idxW = (r * 4) + writeCol;
+                        let grid[idxW] = grid[idxR];
+                        let grid[idxR] = 0;
+                        let changed = true;
+                    }
+                    let writeCol = writeCol + 1;
+                }
+                let readCol = readCol + 1;
+            }
+            let readCol = 0;
+            while (readCol < 3) {
+                let idxR = (r * 4) + readCol;
+                if (grid[idxR] > 0) {
+                    let idxNext = idxR + 1;
+                    if (grid[idxR] = grid[idxNext]) {
+                        let grid[idxR] = grid[idxR] * 2;
+                        let score = score + grid[idxR];
+                        if (grid[idxR] > maxTile) { let maxTile = grid[idxR]; }
+                        let grid[idxNext] = 0;
+                        let changed = true;
+                    }
+                }
+                let readCol = readCol + 1;
+            }
+            let writeCol = 0; let readCol = 0;
+            while (readCol < 4) {
+                let idxR = (r * 4) + readCol;
+                if (grid[idxR] > 0) {
+                    if ((writeCol < readCol) | (writeCol > readCol)) {
+                        let idxW = (r * 4) + writeCol;
+                        let grid[idxW] = grid[idxR];
+                        let grid[idxR] = 0;
+                    }
+                    let writeCol = writeCol + 1;
+                }
+                let readCol = readCol + 1;
+            }
+            let r = r + 1;
+        }
+        return changed;
+    }
+
+    method boolean moveLeft() { return processLeft(); }
+    method boolean moveRight() {
+        var boolean c;
+        do reverseRows(); let c = processLeft(); do reverseRows();
+        return c;
+    }
+    method boolean moveUp() {
+        var boolean c;
+        do transpose(); let c = processLeft(); do transpose();
+        return c;
+    }
+    method boolean moveDown() {
+        var boolean c;
+        do transpose(); do reverseRows(); let c = processLeft(); do reverseRows(); do transpose();
+        return c;
+    }
+}
